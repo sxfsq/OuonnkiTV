@@ -1,6 +1,6 @@
 import { Navbar, NavbarBrand, NavbarContent, Input } from '@heroui/react'
 import { OkiLogo, SearchIcon } from '@/components/icons'
-import { NavLink } from 'react-router'
+import { NavLink, useLocation } from 'react-router'
 import { useSearch } from '@/hooks'
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
@@ -9,9 +9,10 @@ import RecentHistory from '@/components/RecentHistory'
 export default function Navigation() {
   const { search, searchMovie } = useSearch()
   const [inputContent, setInputContent] = useState('')
+  const location = useLocation()
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter') {
-      searchMovie(inputContent)
+      searchMovie(inputContent, !location.pathname.startsWith('/search/'))
     }
   }
   useEffect(() => {
@@ -19,7 +20,7 @@ export default function Navigation() {
   }, [search])
   return (
     <motion.div
-      className="sticky top-0 z-50"
+      className="sticky top-0 z-50 flex justify-center"
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{
@@ -28,14 +29,17 @@ export default function Navigation() {
         ease: 'easeOut',
       }}
     >
-      <Navbar>
-        <NavbarBrand>
+      <Navbar classNames={{ wrapper: 'max-w-300 p-2' }}>
+        <NavbarBrand className="!flex-none">
           <NavLink to="/" className="flex items-center gap-2">
             <motion.div layoutId="app-logo" className="flex items-end gap-2">
               <motion.div layoutId="logo-icon">
                 <OkiLogo />
               </motion.div>
-              <motion.p layoutId="logo-text" className="text-lg font-bold text-inherit">
+              <motion.p
+                layoutId="logo-text"
+                className="hidden text-lg font-bold text-inherit md:block"
+              >
                 OUONNKI TV
               </motion.p>
             </motion.div>
